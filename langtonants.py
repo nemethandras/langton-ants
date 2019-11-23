@@ -7,8 +7,8 @@ import re
 
 ############################### PRIVATE IMPORTS ###############################
 
-from CellClass import Cell
-from AntClass import Ant
+from cellclass import Cell
+from antclass import Ant
 from utils import *
 
 ###############################################################################

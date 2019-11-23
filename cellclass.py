@@ -2,7 +2,7 @@
 
 import random
 
-from AntClass import Ant
+from antclass import Ant
 from utils import *
 
 # A cell on the game grid #
