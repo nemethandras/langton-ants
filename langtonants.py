@@ -22,11 +22,11 @@ from utils.regex import Regex as regex
 
 rule = [270, 90, 315, 45, 90]
 speedup = 2
-cellGrid = list()
-cellGridHeight = -1 # invalid initial value for checking #
-cellGridWidth = -1 # invalid initial value for checking #
-antList = list()
-roundCount = 0
+cell_grid = list()
+cell_grid_height = -1 # invalid initial value for checking #
+cell_grid_width = -1 # invalid initial value for checking #
+ant_list = list()
+round_count = 0
 
 # regular expression matchers ##################################################
 
@@ -43,82 +43,86 @@ REGEX_ANT_DATA = re.compile("(?P<name>[a-zA-Z]),(?P<row>(0|[1-9][0-9]*)),(?P<col
 
 # control function definitions #################################################
 
-# getAnt #######################################################################
+# get_ant ######################################################################
 
-def getAnt(argAntName):
-    antName = argAntName.lower()
+def get_ant(arg_ant_name):
 
-    for currentAnt in antList:
-        if currentAnt.getName() == antName:
-            return currentAnt
+    ant_name = arg_ant_name.lower()
+
+    for current_ant in ant_list:
+        if current_ant.get_name() == ant_name:
+            return current_ant
 
     # if an ant was not found, None is returned #
     return None
 
-# performAntActions ############################################################
+# perform_ant_actions ##########################################################
 
-def performAntActions(argAnt):
-    global cellGrid
+def perform_ant_actions(arg_ant):
 
-    if argAnt is None:
+    global cell_grid
+
+    if arg_ant is None:
         return None
 
-    antOriginPosRow = argAnt.getPosRow()
-    antOriginPosColumn = argAnt.getPosColumn()
-    antOriginCell = cellGrid[antOriginPosRow][antOriginPosColumn]
+    ant_origin_pos_row = arg_ant.get_pos_row()
+    ant_origin_pos_column = arg_ant.get_pos_column()
+    ant_origin_cell = cell_grid[ant_origin_pos_row][ant_origin_pos_column]
 
-    antTargetPosRow = antOriginPosRow + argAnt.getTargetPosRowRelation()
-    antTargetPosColumn = antOriginPosColumn + argAnt.getTargetPosColumnRelation()
+    ant_target_pos_row = ant_origin_pos_row + arg_ant.get_target_pos_row_relation()
+    ant_target_pos_column = ant_origin_pos_column + arg_ant.get_target_pos_column_relation()
 
     try:
-        antTargetCell = cellGrid[antTargetPosRow][antTargetPosColumn]
-    except IndexError as e:
-        uiFunction_escape(list(argAnt.getName()))
+        ant_target_cell = cell_grid[ant_target_pos_row][ant_target_pos_column]
+    except IndexError as err:
+        msg.error(str(err))
+        ui_function_escape(list(arg_ant.get_name()))
         return None
 
     # move if possible #
-    if antTargetCell.hasOccupyingAnt() or antTargetCell.isObstacle():
-        antTargetCell = antOriginCell
-        antTargetPosRow = antOriginPosRow
-        antTargetPosColumn = antOriginPosColumn
+    if ant_target_cell.has_occupying_ant() or ant_target_cell.is_obstacle():
+        ant_target_cell = ant_origin_cell
+        ant_target_pos_row = ant_origin_pos_row
+        ant_target_pos_column = ant_origin_pos_column
     else:
-        argAnt.setPosition(antTargetPosRow, antTargetPosColumn)
+        arg_ant.set_position(ant_target_pos_row, ant_target_pos_column)
 
-        antOriginCell.removeOccupyingAnt()
-        antTargetCell.setOccupyingAnt(argAnt)
+        ant_origin_cell.remove_occupying_ant()
+        ant_target_cell.set_occupying_ant(arg_ant)
 
     # turn
-    antTargetCellOriginalColor = antTargetCell.getColor()
-    argAnt.changeOrientation(rule[antTargetCellOriginalColor], cellGridHeight, cellGridWidth)
+    ant_target_cell_original_color = ant_target_cell.get_color()
+    arg_ant.change_orientation(rule[ant_target_cell_original_color], cell_grid_height, cell_grid_width)
 
     # change cell color based on formula #
-    antTargetCell.recalculateColor()
+    ant_target_cell.recalculate_color()
 
     # if everything went in order, return ant for a possible new iteration #
-    return argAnt
+    return arg_ant
 
-# decorator: printGridAfter ####################################################
+# decorator: print_grid_after ##################################################
 
-def printGridAfter(argFunction):
-    def newFunction(arguments):
-        argFunction(arguments)
-        uiFunction_print(list())
-    return newFunction
+def print_grid_after(arg_function):
+    def new_function(arguments):
+        arg_function(arguments)
+        ui_function_print(list())
+    return new_function
 
-# decorator: printResult #######################################################
+# decorator: print_result ######################################################
 
-def printResult(argFunction):
-    def newFunction(arguments):
-        result = argFunction(arguments)
+def print_result(arg_function):
+    def new_function(arguments):
+        result = arg_function(arguments)
         if result is not None:
             print(str(result))
-    return newFunction
+    return new_function
 
 # user interface definitions ###################################################
 
-# uiFunction_quit ##############################################################
+# ui_function_quit #############################################################
 
-def uiFunction_quit(arguments):
+def ui_function_quit(arguments):
+
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
@@ -126,121 +130,128 @@ def uiFunction_quit(arguments):
     sys.exit(0)
 ### BREAKPOINT #
 
-# uiFunction_print #############################################################
+# ui_function_print ############################################################
 
 # reference function for @printGridAfter
-def uiFunction_print(arguments):
-    global cellGrid
+def ui_function_print(arguments):
+
+    global cell_grid
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
 
-    for n1 in range(0, cellGridHeight):
-        rowString = ""
+    for row_no in range(0, cell_grid_height):
+        row_string = ""
 
-        for n2 in range(0, cellGridWidth):
-            cell = cellGrid[n1][n2].getRepresentation()
+        for col_no in range(0, cell_grid_width):
+            cell = cell_grid[row_no][col_no].get_representation()
 
-            rowString += cell
+            row_string += cell
 
-        print(rowString)
+        print(row_string)
 
-# uiFunction_ant ###############################################################
+# ui_function_ant ##############################################################
 
-@printResult
-def uiFunction_ant(arguments):
-    global antList
+@print_result
+def ui_function_ant(arguments):
+
+    global ant_list
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return None
 
-    resultString = ""
+    result_string = ""
 
-    for i in range(0, len(antList)):
-        currentAnt = antList[i]
-        resultString += currentAnt.getName();
+    for i in range(0, len(ant_list)):
+        current_ant = ant_list[i]
+        result_string += current_ant.get_name()
 
-        if i < len(antList) - 1:
-            resultString += ", "
+        if i < len(ant_list) - 1:
+            result_string += ", "
 
-    return "The following ants are on the grid: " + resultString
+    return "The following ants are on the grid: " + result_string
 
-# uiFunction_reset #############################################################
+# ui_function_reset ############################################################
 
-@printGridAfter
-def uiFunction_reset(arguments):
-    global cellGrid
+@print_grid_after
+def ui_function_reset(arguments):
+
+    global cell_grid
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
 
-    for n1 in range(0, cellGridHeight):
-        for n2 in range(0, cellGridWidth):
-            cellGrid[n1][n2].resetColor()
+    for n1 in range(0, cell_grid_height):
+        for n2 in range(0, cell_grid_width):
+            cell_grid[n1][n2].reset_color()
 
     msg.info("the grid cells have been reset")
 
-# uiFunction_random ############################################################
+# ui_function_random ###########################################################
 
-@printGridAfter
-def uiFunction_random(arguments):
-    global cellGrid
+@print_grid_after
+def ui_function_random(arguments):
+
+    global cell_grid
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
 
-    for n1 in range(0, cellGridHeight):
-        for n2 in range(0, cellGridWidth):
-            cellGrid[n1][n2].randomCell()
+    for n1 in range(0, cell_grid_height):
+        for n2 in range(0, cell_grid_width):
+            cell_grid[n1][n2].random_cell()
 
     msg.info("the grid cells have been randomized")
 
-# uiFunction_arcade ############################################################
+# ui_function_arcade ###########################################################
 
-@printGridAfter
-def uiFunction_arcade(arguments):
-    global cellGrid
-    global antList
+@print_grid_after
+def ui_function_arcade(arguments):
+
+    global cell_grid
+    global ant_list
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
 
-    for n1 in range(0, cellGridHeight):
-        for n2 in range(0, cellGridWidth):
-            if n1 == 0 or n1 == (cellGridHeight - 1) or n2 == 0 or n2 == (cellGridWidth - 1):
-                cellGrid[n1][n2].makeObstacle()
+    for n1 in range(0, cell_grid_height):
+        for n2 in range(0, cell_grid_width):
+            if n1 == 0 or n1 == (cell_grid_height - 1) or n2 == 0 or n2 == (cell_grid_width - 1):
+                cell_grid[n1][n2].make_obstacle()
             else:
-                cellGrid[n1][n2].randomColor()
+                cell_grid[n1][n2].random_color()
 
-    for ant in antList:
-        row = ant.getPosRow()
-        column = ant.getPosColumn()
+    for ant in ant_list:
+        row = ant.get_pos_row()
+        column = ant.get_pos_column()
 
-        if row == 0 or row == (cellGridHeight - 1) or column == 0 or column == (cellGridWidth - 1):
-            uiFunction_escape(list(ant.getName()))
+        if row == 0 or row == (cell_grid_height - 1) or column == 0 or column == (cell_grid_width - 1):
+            ui_function_escape(list(ant.get_name()))
 
     msg.info("a random arcade grid has been created")
 
-# uiFunction_step ##############################################################
+# ui_function_step #############################################################
 
-def uiFunction_step(arguments):
+def ui_function_step(arguments):
+
     if len(arguments) > 0:
         msg.warning("too many parameters")
         return
 
     msg.info("one move has been made")
-    uiFunction_move(list("1"))
+    ui_function_move(list("1"))
 
-# uiFunction_move ##############################################################
+# ui_function_move #############################################################
 
-@printGridAfter
-def uiFunction_move(arguments):
-    global roundCount
+@print_grid_after
+def ui_function_move(arguments):
+
+    global round_count
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -263,29 +274,30 @@ def uiFunction_move(arguments):
         return # if 0 is given, no moves are made #
 
     for n in range(1, count + 1):
-        roundCount += 1
+        round_count += 1
 
-        for currentAnt in antList:
-            currentAntType = currentAnt.getType()
+        for current_ant in ant_list:
+            current_ant_type = current_ant.get_type()
 
-            if currentAntType == "standard":
-                performAntActions(currentAnt)
+            if current_ant_type == "standard":
+                perform_ant_actions(current_ant)
                 continue
 
-            if currentAntType == "busy":
+            if current_ant_type == "busy":
                 for i in range(1, speedup + 1):
-                    currentAnt = performAntActions(currentAnt)
+                    current_ant = perform_ant_actions(current_ant)
                 continue
 
-            if currentAntType == "lazy":
-                if ((roundCount - 1) % speedup) == 0:
-                    performAntActions(currentAnt)
+            if current_ant_type == "lazy":
+                if ((round_count - 1) % speedup) == 0:
+                    perform_ant_actions(current_ant)
                 continue
 
-# uiFunction_position ##########################################################
+# ui_function_position #########################################################
 
-@printResult
-def uiFunction_position(arguments):
+@print_result
+def ui_function_position(arguments):
+
     if len(arguments) < 1:
         msg.warning("missing parameter")
         return None
@@ -294,21 +306,22 @@ def uiFunction_position(arguments):
         msg.warning("too many parameters")
         return None
 
-    antName = arguments[0]
+    ant_name = arguments[0]
 
-    ant = getAnt(antName)
+    ant = get_ant(antName)
 
     if ant is None:
         msg.warning("invalid parameter, no ant with the given name")
         return None
 
-    return "The position of ant '" + antName + "' is: " + ant.getPositionStr()
+    return "The position of ant '" + ant_name + "' is: " + ant.get_position_str()
 
-# uiFunction_field #############################################################
+# ui_function_field ############################################################
 
-@printResult
-def uiFunction_field(arguments):
-    global cellGrid
+@print_result
+def ui_function_field(arguments):
+
+    global cell_grid
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -318,9 +331,9 @@ def uiFunction_field(arguments):
         msg.warning("too many parameters")
         return None
 
-    argCoordinates = arguments[0]
+    arg_coordinates = arguments[0]
 
-    parsed = regex.match(argCoordinates, REGEX_COORDINATES)
+    parsed = regex.match(arg_coordinates, REGEX_COORDINATES)
     if parsed is None:
         msg.warning("syntax error in the parameter")
         return None
@@ -329,16 +342,17 @@ def uiFunction_field(arguments):
     column = int(parsed["column"])
 
     # values < 0 have been eliminated at parsing
-    if row > cellGridHeight or column > cellGridWidth:
+    if row > cell_grid_height or column > cell_grid_width:
         msg.warning("no cell exists at the indices given")
         return None
 
-    return "The field in the " + str(row + 1) + ". row and the " + str(column + 1) + ". column has the color: " + cellGrid[row][column].getRepresentation()
+    return "The field in the " + str(row + 1) + ". row and the " + str(column + 1) + ". column has the color: " + cell_grid[row][column].get_representation()
 
-# uiFunction_direction #########################################################
+# ui_function_direction ########################################################
 
-@printResult
-def uiFunction_direction(arguments):
+@print_result
+def ui_function_direction(arguments):
+
     if len(arguments) < 1:
         msg.warning("missing parameter")
         return None
@@ -347,21 +361,22 @@ def uiFunction_direction(arguments):
         msg.warning("too many parameters")
         return None
 
-    antName = arguments[0]
+    ant_name = arguments[0]
 
-    ant = getAnt(antName)
+    ant = get_ant(antName)
 
     if ant is None:
         msg.warning("invalid parameter, no ant with the given name")
         return None
 
-    return ant.getOrientationStr()
+    return ant.get_orientation_str()
 
-# uiFunction_create ############################################################
+# ui_function_create ###########################################################
 
-def uiFunction_create(arguments):
-    global cellGrid
-    global antList
+def ui_function_create(arguments):
+
+    global cell_grid
+    global ant_list
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -374,41 +389,42 @@ def uiFunction_create(arguments):
     parsed = regex.match(arguments[0], REGEX_ANT_DATA)
 
     if parsed is not None:
-        newAntName = parsed["name"]
-        newAntPosRow = int(parsed["row"])
-        newAntPosColumn = int(parsed["column"])
+        new_ant_name = parsed["name"]
+        new_ant_pos_row = int(parsed["row"])
+        new_ant_pos_column = int(parsed["column"])
     else:
         msg.warning("syntax error in the parameter")
         return
 
-    if getAnt(newAntName) is not None:
-        msg.warningMessage("an ant with this name already exists")
+    if get_ant(new_ant_name) is not None:
+        msg.warning("an ant with this name already exists")
         return
 
-    if newAntPosRow > cellGridHeight or newAntPosColumn > cellGridWidth:
+    if new_ant_pos_row > cell_grid_height or new_ant_pos_column > cell_grid_width:
         msg.warning("no cell exists at the indices given")
         return
 
-    if cellGrid[newAntPosRow][newAntPosColumn].getOccupyingAnt() is not None:
+    if cell_grid[new_ant_pos_row][new_ant_pos_column].get_occupying_ant() is not None:
         msg.warning("the cell at the given indices is already occupied by another ant")
         return
 
-    if cellGrid[newAntPosRow][newAntPosColumn].isObstacle():
+    if cell_grid[new_ant_pos_row][new_ant_pos_column].is_obstacle():
         msg.warning("the cell at the given indices contains an obstacle")
         return
 
-    newAnt = Ant(newAntName, newAntPosRow, newAntPosColumn, cellGridHeight, cellGridWidth)
-    antList.append(newAnt)
-    antList.sort()
-    cellGrid[newAntPosRow][newAntPosColumn].setOccupyingAnt(newAnt)
+    new_ant = Ant(new_ant_name, new_ant_pos_row, new_ant_pos_column, cell_grid_height, cell_grid_width)
+    ant_list.append(new_ant)
+    ant_list.sort()
+    cell_grid[new_ant_pos_row][new_ant_pos_column].set_occupying_ant(new_ant)
 
-    msg.info("Created a new ant '" + newAntName + "' in the " + newAntPosRow + ". row and the " + newAntPosColumn + ". column.")
+    msg.info("Created a new ant '" + new_ant_name + "' in the " + new_ant_pos_row + ". row and the " + new_ant_pos_column + ". column.")
 
-# uiFunction_escape ############################################################
+# ui_function_escape ###########################################################
 
-def uiFunction_escape(arguments):
-    global cellGrid
-    global antList
+def ui_function_escape(arguments):
+
+    global cell_grid
+    global ant_list
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -418,70 +434,71 @@ def uiFunction_escape(arguments):
         msg.warning("too many parameters")
         return
 
-    antName = arguments[0]
+    ant_name = arguments[0]
 
-    parsed = regex.match(antName, REGEX_ANT_ANY)
+    parsed = regex.match(ant_name, REGEX_ANT_ANY)
+
     if parsed is None:
         msg.warning("invalid ant name")
         return
 
-    ant = getAnt(antName)
+    ant = get_ant(ant_name)
 
     if ant is None:
         msg.warning("invalid parameter, no ant with the given name")
         return
 
-    cellGrid[ant.getPosRow()][ant.getPosColumn()].removeOccupyingAnt()
-    antList.remove(ant)
+    cell_grid[ant.get_pos_row()][ant.get_pos_column()].remove_occupying_ant()
+    ant_list.remove(ant)
 
-    msg.info("Ant '" + antName + "' has been deleted.")
+    msg.info("Ant '" + ant_name + "' has been deleted.")
 
-    if (len(antList) < 1):
+    if len(ant_list) < 1:
         msg.warning("all ants have left the game grid")
 
-# uiFunction_help ##############################################################
+# ui_function_help #############################################################
 
-def uiFunction_help(arguments):
-    global uiFunctionsDict
-    global uiCommandList
+def ui_function_help(arguments):
+    global ui_functions_dict
+    global ui_command_list
 
-    for command in uiCommandList:
+    for command in ui_command_list:
         print(str(command))
 
 # user interface command dictionary ############################################
 
-uiFunctionsDict = {
+ui_functions_dict = {
     # UI commands with zero (0) arguments #
-        "quit"   : uiFunction_quit,
-        "exit"   : uiFunction_quit,
-        "q:"     : uiFunction_quit,
-        "print"  : uiFunction_print,
-        "ant"    : uiFunction_ant,
-        "reset"  : uiFunction_reset,
-        "step"   : uiFunction_step,
-        "s:"     : uiFunction_step,
-        "random" : uiFunction_random,
-        "arcade" : uiFunction_arcade,
-        "help" : uiFunction_help,
+        "quit"   : ui_function_quit,
+        "exit"   : ui_function_quit,
+        "q:"     : ui_function_quit,
+        "print"  : ui_function_print,
+        "ant"    : ui_function_ant,
+        "reset"  : ui_function_reset,
+        "step"   : ui_function_step,
+        "s:"     : ui_function_step,
+        "random" : ui_function_random,
+        "arcade" : ui_function_arcade,
+        "help"   : ui_function_help,
     # UI commands with one (1) arguments #
-        "move"      : uiFunction_move,
-        "position"  : uiFunction_position,
-        "pos"       : uiFunction_position,
-        "field"     : uiFunction_field,
-        "direction" : uiFunction_direction,
-        "create"    : uiFunction_create,
-        "escape"    : uiFunction_escape,
-        "remove"    : uiFunction_escape,
-        "delete"    : uiFunction_escape,
-        "del"    : uiFunction_escape
+        "move"      : ui_function_move,
+        "position"  : ui_function_position,
+        "pos"       : ui_function_position,
+        "field"     : ui_function_field,
+        "direction" : ui_function_direction,
+        "create"    : ui_function_create,
+        "escape"    : ui_function_escape,
+        "remove"    : ui_function_escape,
+        "delete"    : ui_function_escape,
+        "del"       : ui_function_escape
 }
-uiCommandList = list(uiFunctionsDict.keys())
+ui_command_list = list(ui_functions_dict.keys())
 
 # begin main control flow ######################################################
 
-argList = sys.argv
-filename = argList.pop(0)
-arguments = argList
+arg_list = sys.argv
+filename = arg_list.pop(0)
+arguments = arg_list
 argumentcount = len(arguments)
 
 if argumentcount < 1:
@@ -489,59 +506,59 @@ if argumentcount < 1:
     sys.exit(1)
 ### BREAKPOINT #
 
-gameFile = open(arguments[0], 'r')
-gridRows = list()
-for line in gameFile.readlines():
-    gridRows.append(line.splitlines()[0])
-gameFile.close()
+game_file = open(arguments[0], 'r')
+grid_rows = list()
+for line in game_file.readlines():
+    grid_rows.append(line.splitlines()[0])
+game_file.close()
 
-cellGridHeight = len(gridRows)
+cell_grid_height = len(grid_rows)
 
-if cellGridHeight < 1:
+if cell_grid_height < 1:
     msg.error("syntax error in the game file")
     sys.exit(1)
 ### BREAKPOINT #
 
-for n1 in range(0, cellGridHeight):
-    cellGrid.append(list())
+for n1 in range(0, cell_grid_height):
+    cell_grid.append(list())
 
-    if cellGridWidth < 0:
+    if cell_grid_width < 0:
         # the width of the first row is set as a reference value #
-        cellGridWidth = len(gridRows[n1])
+        cell_grid_width = len(grid_rows[n1])
 
-    if len(gridRows[n1]) != cellGridWidth:
+    if len(grid_rows[n1]) != cell_grid_width:
         raise ValueError("syntax error in the game file")
 
     # split the line into 1-character elements #
 
-    lineElements = list()
-    for character in gridRows[n1]:
-        lineElements.append(character)
+    line_elements = list()
+    for character in grid_rows[n1]:
+        line_elements.append(character)
 
-    for n2 in range(0, cellGridWidth):
+    for n2 in range(0, cell_grid_width):
 
-        parsed = regex.match(lineElements[n2], REGEX_ANT_ANY)
+        parsed = regex.match(line_elements[n2], REGEX_ANT_ANY)
 
         if parsed is not None:
-            cellGrid[n1].append( Cell(0) ) # initial color for cell with ant set to 0 (no requirements) #
-            newAnt = Ant(parsed["name"], n1, n2, cellGridHeight, cellGridWidth)
-            if newAnt in antList:
+            cell_grid[n1].append(Cell(0)) # initial color for cell with ant set to 0 (no requirements) #
+            new_ant = Ant(parsed["name"], n1, n2, cell_grid_height, cell_grid_width)
+            if new_ant in ant_list:
                 raise ValueError("semantic error, ant already exists")
-            antList.append(newAnt)
-            antList.sort()
-            cellGrid[n1][n2].setOccupyingAnt(newAnt)
+            ant_list.append(new_ant)
+            ant_list.sort()
+            cell_grid[n1][n2].set_occupying_ant(new_ant)
             continue
 
-        parsed = regex.match(lineElements[n2], REGEX_COLOR_ANY)
+        parsed = regex.match(line_elements[n2], REGEX_COLOR_ANY)
 
         if parsed is not None:
-            cellGrid[n1].append( Cell(int(parsed["color"])) )
+            cell_grid[n1].append(Cell(int(parsed["color"])))
             continue
 
-        parsed = regex.match(lineElements[n2], REGEX_OBSTACLE)
+        parsed = regex.match(line_elements[n2], REGEX_OBSTACLE)
 
         if parsed is not None:
-            cellGrid[n1].append( Cell(-1) )
+            cell_grid[n1].append(Cell(-1))
             continue
 
         raise ValueError("syntax error, illegal character in the game file")
@@ -553,9 +570,9 @@ if argumentcount > 1:
 
         parsed = regex.match(arguments[n], REGEX_RULE_CLA)
         if parsed is not None:
-            newRule = parsed["value"].split("-")
+            new_rule = parsed["value"].split("-")
             for i in range(0, len(rule)):
-                rule[i] = int(newRule[i])
+                rule[i] = int(new_rule[i])
             continue
 
         parsed = regex.match(arguments[n], REGEX_SPEEDUP_CLA)
@@ -571,23 +588,22 @@ if argumentcount > 1:
 # begin interactive user interface #############################################
 
 while True:
-    userInput = input("LangtonAnts $ ")
-    inputElements = userInput.split()
-    inputElementCount = len(inputElements)
+    user_input = input("LangtonAnts $ ")
+    input_elements = user_input.split()
+    input_element_count = len(input_elements)
 
-    if inputElementCount < 1:
+    if input_element_count < 1:
         msg.warning("invalid command")
         continue
 
-    uiCommand = inputElements.pop(0)
-    # inputElements now only contains the parameters
+    ui_command = input_elements.pop(0)
+    # input_elements now only contains the parameters
 
-    if uiCommand not in uiCommandList:
+    if ui_command not in ui_command_list:
         msg.warning("invalid command")
         continue
 
-    uiFunctionsDict[uiCommand](inputElements)
+    ui_functions_dict[ui_command](input_elements)
     continue
 
 # end of main control flow #####################################################
-

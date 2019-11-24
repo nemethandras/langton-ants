@@ -7,7 +7,7 @@ from utils.codec import Hashing as hashing
 
 # An ant #
 
-class Ant(object):
+class Ant():
 
     # Orientations #
     ORIENTATION_NORTH = "N"
@@ -41,12 +41,12 @@ class Ant(object):
     ONESOUTH = 1
     ONEEAST = 1
 
-    def __init__(self, argAntName, argPosRow, argPosColumn, cellGridHeight, cellGridWidth):
+    def __init__(self, arg_ant_name, arg_pos_row, arg_pos_column, cell_grid_height, cell_grid_width):
 
         self.name = None
         self.orientation = None
 
-        parsed = regex.match(argAntName, self.REGEX_ANT_DIRECTION)
+        parsed = regex.match(arg_ant_name, self.REGEX_ANT_DIRECTION)
 
         if parsed is not None:
             if parsed["North"] is not None:
@@ -56,114 +56,114 @@ class Ant(object):
                 self.name = parsed["South"].lower()
                 self.orientation = 180
 
-        self.hash = hashing.integer_hash(hashing.hash_sha1(codec.encode(self.getName())))
-        self.antType = None  # "standard" ant, "busy" ant, "lazy" ant #
+        self.hash = hashing.integer_hash(hashing.hash_sha1(codec.encode(self.get_name())))
+        self.ant_type = None  # "standard" ant, "busy" ant, "lazy" ant #
 
-        parsed = regex.match(self.getName(), self.REGEX_ANT_TYPE)
+        parsed = regex.match(self.get_name(), self.REGEX_ANT_TYPE)
 
         if parsed is not None:
             if parsed["standard"] is not None:
-                self.antType = "standard"
+                self.ant_type = "standard"
             elif parsed["busy"] is not None:
-                self.antType = "busy"
+                self.ant_type = "busy"
             elif parsed["lazy"] is not None:
-                self.antType = "lazy"
+                self.ant_type = "lazy"
 
-        self.posRow = -1
-        self.posColumn = -1
-        self.setPosition(argPosRow, argPosColumn)
+        self.pos_row = -1
+        self.pos_column = -1
+        self.set_position(arg_pos_row, arg_pos_column)
 
-        self.targetPosRowRelation = 0
-        self.targetPosColumnRelation = 0
-        self.__determineTargetPosRelations(cellGridHeight, cellGridWidth)
+        self.target_pos_row_relation = 0
+        self.target_pos_column_relation = 0
+        self.__determine_target_pos_relations(cell_grid_height, cell_grid_width)
 
 
     def __lt__(self, other):
-        return self.getName() < other.getName()
+        return self.get_name() < other.get_name()
 
     def __le__(self, other):
-        return self.getName() <= other.getName()
+        return self.get_name() <= other.get_name()
 
     def __eq__(self, other):
-        return self.getName() == other.getName()
+        return self.get_name() == other.get_name()
 
     def __ne__(self, other):
-        return self.getName() != other.getName()
+        return self.get_name() != other.get_name()
 
     def __gt__(self, other):
-        return self.getName() > other.getName()
+        return self.get_name() > other.get_name()
 
     def __ge__(self, other):
-        return self.getName() >= other.getName()
+        return self.get_name() >= other.get_name()
 
     def __hash__(self):
-        return self.getHash()
+        return self.get_hash()
 
-    def getName(self):
+    def get_name(self):
         return self.name
 
-    def getHash(self):
+    def get_hash(self):
         return self.hash
 
-    def getOrientationStr(self):
+    def get_orientation_str(self):
         return self.ORIENTATION_TO_STR_DICT[self.orientation]
 
-    def changeOrientation(self, argAngle, cellGridHeight, cellGridWidth):
-        self.orientation = (self.orientation + argAngle) % 360
-        self.__determineTargetPosRelations(cellGridHeight, cellGridWidth)
+    def change_orientation(self, arg_angle, cell_grid_height, cell_grid_width):
+        self.orientation = (self.orientation + arg_angle) % 360
+        self.__determine_target_pos_relations(cell_grid_height, cell_grid_width)
 
-    def getTargetPosRowRelation(self):
-        return self.targetPosRowRelation
+    def get_target_pos_row_relation(self):
+        return self.target_pos_row_relation
 
-    def getTargetPosColumnRelation(self):
-        return self.targetPosColumnRelation
+    def get_target_pos_column_relation(self):
+        return self.target_pos_column_relation
 
-    def setTargatPosRelation(self, argTargetPosRowRelation, argTargetPosColumnRelation):
-        self.targetPosRowRelation = argTargetPosRowRelation
-        self.targetPosColumnRelation = argTargetPosColumnRelation
+    def set_targat_pos_relation(self, arg_target_pos_row_relation, arg_target_pos_column_relation):
+        self.target_pos_row_relation = arg_target_pos_row_relation
+        self.target_pos_column_relation = arg_target_pos_column_relation
 
-    def getType(self):
-        return self.antType
+    def get_type(self):
+        return self.ant_type
 
-    def getPositionStr(self):
-        return str(self.posRow) + "," + str(self.posColumn)
+    def get_position_str(self):
+        return str(self.pos_row) + "," + str(self.pos_column)
 
-    def getPosRow(self):
-        return self.posRow
+    def get_pos_row(self):
+        return self.pos_row
 
-    def getPosColumn(self):
-        return self.posColumn
+    def get_pos_column(self):
+        return self.pos_column
 
-    def setPosition(self, argPosRow, argPosColumn):
-        self.posRow = argPosRow
-        self.posColumn = argPosColumn
+    def set_position(self, arg_pos_row, arg_pos_column):
+        self.pos_row = arg_pos_row
+        self.pos_column = arg_pos_column
 
-    def __determineTargetPosRelations(self, cellGridHeight, cellGridWidth):
-        orientationStr = self.getOrientationStr()
+    def __determine_target_pos_relations(self, cell_grid_height, cell_grid_width):
+        orientation_str = self.get_orientation_str()
 
-        if orientationStr == self.ORIENTATION_NORTH:
-            if self.getPosRow() > 0:
-                self.setTargatPosRelation(self.ONENORTH, self.INPLACE)
-        elif orientationStr == self.ORIENTATION_NORTHEAST:
-            if self.getPosRow() > 0 and self.getPosColumn() < cellGridWidth - 1:
-                self.setTargatPosRelation(self.ONENORTH, self.ONEEAST)
-        elif orientationStr == self.ORIENTATION_EAST:
-            if self.getPosColumn() < cellGridWidth - 1:
-                self.setTargatPosRelation(self.INPLACE, self.ONEEAST)
-        elif orientationStr == self.ORIENTATION_SOUTHEAST:
-            if self.getPosRow() < cellGridHeight - 1 and self.getPosColumn() < cellGridWidth - 1:
-                self.setTargatPosRelation(self.ONESOUTH, self.ONEEAST)
-        elif orientationStr == self.ORIENTATION_SOUTH:
-            if self.getPosRow() < cellGridHeight - 1:
-                self.setTargatPosRelation(self.ONESOUTH, self.INPLACE)
-        elif orientationStr == self.ORIENTATION_SOUTHWEST:
-            if self.getPosRow() < cellGridHeight - 1 and self.getPosColumn() > 0:
-                self.setTargatPosRelation(self.ONESOUTH, self.ONEWEST)
-        elif orientationStr == self.ORIENTATION_WEST:
-            if self.getPosColumn() > 0:
-                self.setTargatPosRelation(self.INPLACE, self.ONEWEST)
-        elif orientationStr == self.ORIENTATION_NORTHWEST:
-            if self.posRow > 0 and self.getPosColumn() > 0:
-                self.setTargatPosRelation(self.ONENORTH, self.ONEWEST)
+        if orientation_str == self.ORIENTATION_NORTH:
+            if self.get_pos_row() > 0:
+                self.set_targat_pos_relation(self.ONENORTH, self.INPLACE)
+        elif orientation_str == self.ORIENTATION_NORTHEAST:
+            if self.get_pos_row() > 0 and self.get_pos_column() < cell_grid_width - 1:
+                self.set_targat_pos_relation(self.ONENORTH, self.ONEEAST)
+        elif orientation_str == self.ORIENTATION_EAST:
+            if self.get_pos_column() < cell_grid_width - 1:
+                self.set_targat_pos_relation(self.INPLACE, self.ONEEAST)
+        elif orientation_str == self.ORIENTATION_SOUTHEAST:
+            if self.get_pos_row() < cell_grid_height - 1 and self.get_pos_column() < cell_grid_width - 1:
+                self.set_targat_pos_relation(self.ONESOUTH, self.ONEEAST)
+        elif orientation_str == self.ORIENTATION_SOUTH:
+            if self.get_pos_row() < cell_grid_height - 1:
+                self.set_targat_pos_relation(self.ONESOUTH, self.INPLACE)
+        elif orientation_str == self.ORIENTATION_SOUTHWEST:
+            if self.get_pos_row() < cell_grid_height - 1 and self.get_pos_column() > 0:
+                self.set_targat_pos_relation(self.ONESOUTH, self.ONEWEST)
+        elif orientation_str == self.ORIENTATION_WEST:
+            if self.get_pos_column() > 0:
+                self.set_targat_pos_relation(self.INPLACE, self.ONEWEST)
+        elif orientation_str == self.ORIENTATION_NORTHWEST:
+            if self.pos_row > 0 and self.get_pos_column() > 0:
+                self.set_targat_pos_relation(self.ONENORTH, self.ONEWEST)
 
-
+# END ##########################################################################

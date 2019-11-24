@@ -1,7 +1,6 @@
 
 import random
 
-from components.ant import Ant
 from utils.outputmessages import OutputMessages as msg
 from utils.asciistyling import AsciiStyle as sty
 from utils.asciistyling import AsciiColor as color
@@ -9,91 +8,88 @@ from utils.asciistyling import AsciiBackground as bg
 
 # A cell on the game grid #
 
-class Cell(object):
+class Cell():
 
     OBSTACLE_COLOR = -1
     MIN_COLOR_INDEX = 0
     MAX_COLOR_INDEX = 4
     DEFAULT_COLOR = 0
 
-    def __init__(self, argType):
+    def __init__(self, arg_type):
         self.color = -1 # default value is obstacle #
-        self.occupyingAnt = None
+        self.occupying_ant = None
 
-        if argType >= 0:
-            self.setColor(argType)
+        if arg_type >= 0:
+            self.set_color(arg_type)
 
-    def hasOccupyingAnt(self):
-        if self.occupyingAnt is not None:
-            return True
-        else:
-            return False
+    def has_occupying_ant(self):
+        # return False if None, True if set
+        return bool(self.occupying_ant)
 
-    def getOccupyingAnt(self):
-        return self.occupyingAnt
+    def get_occupying_ant(self):
+        return self.occupying_ant
 
-    def setOccupyingAnt(self, newOccupyingAnt):
-        self.occupyingAnt = newOccupyingAnt
+    def set_occupying_ant(self, new_occupying_ant):
+        self.occupying_ant = new_occupying_ant
 
-    def removeOccupyingAnt(self):
-        self.occupyingAnt = None
+    def remove_occupying_ant(self):
+        self.occupying_ant = None
 
-    def isObstacle(self):
-        if self.color < 0:
-            return True
-        else:
-            return False
+    def is_obstacle(self):
+        # return False of True
+        return bool(self.color < 0)
 
-    def makeObstacle(self):
+    def make_obstacle(self):
         self.color = self.OBSTACLE_COLOR
 
-    def getColor(self):
+    def get_color(self):
         return self.color
 
-    def setColor(self, argNewColor):
-        if argNewColor < self.MIN_COLOR_INDEX or argNewColor > self.MAX_COLOR_INDEX:
+    def set_color(self, arg_new_color):
+        if arg_new_color < self.MIN_COLOR_INDEX or arg_new_color > self.MAX_COLOR_INDEX:
             msg.warning("syntax error, invalid cell color")
             return
-        self.color = argNewColor
+        self.color = arg_new_color
 
-    def resetColor(self):
+    def reset_color(self):
         self.color = self.DEFAULT_COLOR
 
-    def randomColor(self):
+    def random_color(self):
         self.color = random.randint(self.MIN_COLOR_INDEX, self.MAX_COLOR_INDEX)
 
-    def randomCell(self):
+    def random_cell(self):
         self.color = random.randint(self.OBSTACLE_COLOR, self.MAX_COLOR_INDEX)
 
-    def recalculateColor(self, argAlgorithmIndex=1):
-        currentColor = self.getColor()
+    def recalculate_color(self, arg_algorithm_index=1):
+        current_color = self.get_color()
 
-        if argAlgorithmIndex == 1:
-            newColor = (((4 * currentColor) + 23) % (self.MAX_COLOR_INDEX + 1))
+        if arg_algorithm_index == 1:
+            new_color = (((4 * current_color) + 23) % (self.MAX_COLOR_INDEX + 1))
 
-        self.setColor(newColor)
+        self.set_color(new_color)
 
-    def getRepresentation(self):
+    def get_representation(self):
 
-        if self.getOccupyingAnt() is None:
-            returnString = str(self.getColor())
+        if self.get_occupying_ant() is None:
+            return_string = str(self.get_color())
         else:
-            returnString = color.red(self.getOccupyingAnt().getName())
+            return_string = color.red(self.get_occupying_ant().get_name())
 
-        returnString = sty.bold(returnString)
+        return_string = sty.bold(return_string)
 
-        if (self.getColor() == 0):
-            returnString = bg.white(color.white(returnString))
-        elif (self.getColor() == 1):
-            returnString = bg.yellow(color.yellow(returnString))
-        elif (self.getColor() == 2):
-            returnString = bg.blue(color.blue(returnString))
-        elif (self.getColor() == 3):
-            returnString = bg.green(color.green(returnString))
-        elif (self.getColor() == 4):
-            returnString = bg.cyan(color.cyan(returnString))
+        if self.get_color() == 0:
+            return_string = bg.white(color.white(return_string))
+        elif self.get_color() == 1:
+            return_string = bg.yellow(color.yellow(return_string))
+        elif self.get_color() == 2:
+            return_string = bg.blue(color.blue(return_string))
+        elif self.get_color() == 3:
+            return_string = bg.green(color.green(return_string))
+        elif self.get_color() == 4:
+            return_string = bg.cyan(color.cyan(return_string))
         else:
-            returnString = sty.framed(bg.black(color.black("*")))
+            return_string = sty.framed(bg.black(color.black("*")))
 
-        return returnString
+        return return_string
 
+# END ##########################################################################
