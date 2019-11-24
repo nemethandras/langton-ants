@@ -1,11 +1,13 @@
+""" docstring """
 
 #import re
 
-
 class Regex():
+    """ docstring """
 
     @staticmethod
     def match(arg_string, arg_compiled_pattern):
+        """ docstring """
 
         return_value = None
 

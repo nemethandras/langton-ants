@@ -1,3 +1,4 @@
+""" docstring """
 
 import re
 
@@ -8,6 +9,7 @@ from utils.codec import Hashing as hashing
 # An ant #
 
 class Ant():
+    """ docstring """
 
     # Orientations #
     ORIENTATION_NORTH = "N"
@@ -100,41 +102,53 @@ class Ant():
         return self.get_hash()
 
     def get_name(self):
+        """ docstring """
         return self.name
 
     def get_hash(self):
+        """ docstring """
         return self.hash
 
     def get_orientation_str(self):
+        """ docstring """
         return self.ORIENTATION_TO_STR_DICT[self.orientation]
 
     def change_orientation(self, arg_angle, cell_grid_height, cell_grid_width):
+        """ docstring """
         self.orientation = (self.orientation + arg_angle) % 360
         self.__determine_target_pos_relations(cell_grid_height, cell_grid_width)
 
     def get_target_pos_row_relation(self):
+        """ docstring """
         return self.target_pos_row_relation
 
     def get_target_pos_column_relation(self):
+        """ docstring """
         return self.target_pos_column_relation
 
     def set_targat_pos_relation(self, arg_target_pos_row_relation, arg_target_pos_column_relation):
+        """ docstring """
         self.target_pos_row_relation = arg_target_pos_row_relation
         self.target_pos_column_relation = arg_target_pos_column_relation
 
     def get_type(self):
+        """ docstring """
         return self.ant_type
 
     def get_position_str(self):
+        """ docstring """
         return str(self.pos_row) + "," + str(self.pos_column)
 
     def get_pos_row(self):
+        """ docstring """
         return self.pos_row
 
     def get_pos_column(self):
+        """ docstring """
         return self.pos_column
 
     def set_position(self, arg_pos_row, arg_pos_column):
+        """ docstring """
         self.pos_row = arg_pos_row
         self.pos_column = arg_pos_column
 

@@ -1,3 +1,4 @@
+""" docstring """
 
 import random
 
@@ -9,6 +10,7 @@ from utils.asciistyling import AsciiBackground as bg
 # A cell on the game grid #
 
 class Cell():
+    """ docstring """
 
     OBSTACLE_COLOR = -1
     MIN_COLOR_INDEX = 0
@@ -23,44 +25,57 @@ class Cell():
             self.set_color(arg_type)
 
     def has_occupying_ant(self):
+        """ docstring """
         # return False if None, True if set
         return bool(self.occupying_ant)
 
     def get_occupying_ant(self):
+        """ docstring """
         return self.occupying_ant
 
     def set_occupying_ant(self, new_occupying_ant):
+        """ docstring """
         self.occupying_ant = new_occupying_ant
 
     def remove_occupying_ant(self):
+        """ docstring """
         self.occupying_ant = None
 
     def is_obstacle(self):
+        """ docstring """
         # return False of True
         return bool(self.color < 0)
 
     def make_obstacle(self):
+        """ docstring """
         self.color = self.OBSTACLE_COLOR
 
     def get_color(self):
+        """ docstring """
         return self.color
 
     def set_color(self, arg_new_color):
+        """ docstring """
         if arg_new_color < self.MIN_COLOR_INDEX or arg_new_color > self.MAX_COLOR_INDEX:
             msg.warning("syntax error, invalid cell color")
             return
         self.color = arg_new_color
 
     def reset_color(self):
+        """ docstring """
         self.color = self.DEFAULT_COLOR
 
     def random_color(self):
+        """ docstring """
         self.color = random.randint(self.MIN_COLOR_INDEX, self.MAX_COLOR_INDEX)
 
     def random_cell(self):
+        """ docstring """
         self.color = random.randint(self.OBSTACLE_COLOR, self.MAX_COLOR_INDEX)
 
     def recalculate_color(self, arg_algorithm_index=1):
+        """ docstring """
+
         current_color = self.get_color()
 
         if arg_algorithm_index == 1:
@@ -69,6 +84,7 @@ class Cell():
         self.set_color(new_color)
 
     def get_representation(self):
+        """ docstring """
 
         if self.get_occupying_ant() is None:
             return_string = str(self.get_color())

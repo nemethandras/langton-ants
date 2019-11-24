@@ -46,6 +46,7 @@ REGEX_ANT_DATA = re.compile("(?P<name>[a-zA-Z]),(?P<row>(0|[1-9][0-9]*)),(?P<col
 # get_ant ######################################################################
 
 def get_ant(arg_ant_name):
+    """ docstring """
 
     ant_name = arg_ant_name.lower()
 
@@ -59,6 +60,7 @@ def get_ant(arg_ant_name):
 # perform_ant_actions ##########################################################
 
 def perform_ant_actions(arg_ant):
+    """ docstring """
 
     global cell_grid
 
@@ -103,18 +105,29 @@ def perform_ant_actions(arg_ant):
 # decorator: print_grid_after ##################################################
 
 def print_grid_after(arg_function):
+    """ docstring """
+
     def new_function(arguments):
+        """ docstring """
+
         arg_function(arguments)
         ui_function_print(list())
+
     return new_function
 
 # decorator: print_result ######################################################
 
 def print_result(arg_function):
+    """ docstring """
+
     def new_function(arguments):
+        """ docstring """
+
         result = arg_function(arguments)
+
         if result is not None:
             print(str(result))
+
     return new_function
 
 # user interface definitions ###################################################
@@ -122,6 +135,7 @@ def print_result(arg_function):
 # ui_function_quit #############################################################
 
 def ui_function_quit(arguments):
+    """ docstring """
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
@@ -134,6 +148,7 @@ def ui_function_quit(arguments):
 
 # reference function for @printGridAfter
 def ui_function_print(arguments):
+    """ docstring """
 
     global cell_grid
 
@@ -155,6 +170,7 @@ def ui_function_print(arguments):
 
 @print_result
 def ui_function_ant(arguments):
+    """ docstring """
 
     global ant_list
 
@@ -177,6 +193,7 @@ def ui_function_ant(arguments):
 
 @print_grid_after
 def ui_function_reset(arguments):
+    """ docstring """
 
     global cell_grid
 
@@ -194,6 +211,7 @@ def ui_function_reset(arguments):
 
 @print_grid_after
 def ui_function_random(arguments):
+    """ docstring """
 
     global cell_grid
 
@@ -211,6 +229,7 @@ def ui_function_random(arguments):
 
 @print_grid_after
 def ui_function_arcade(arguments):
+    """ docstring """
 
     global cell_grid
     global ant_list
@@ -238,6 +257,7 @@ def ui_function_arcade(arguments):
 # ui_function_step #############################################################
 
 def ui_function_step(arguments):
+    """ docstring """
 
     if len(arguments) > 0:
         msg.warning("too many parameters")
@@ -250,6 +270,7 @@ def ui_function_step(arguments):
 
 @print_grid_after
 def ui_function_move(arguments):
+    """ docstring """
 
     global round_count
 
@@ -297,6 +318,7 @@ def ui_function_move(arguments):
 
 @print_result
 def ui_function_position(arguments):
+    """ docstring """
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -320,6 +342,7 @@ def ui_function_position(arguments):
 
 @print_result
 def ui_function_field(arguments):
+    """ docstring """
 
     global cell_grid
 
@@ -352,6 +375,7 @@ def ui_function_field(arguments):
 
 @print_result
 def ui_function_direction(arguments):
+    """ docstring """
 
     if len(arguments) < 1:
         msg.warning("missing parameter")
@@ -374,6 +398,7 @@ def ui_function_direction(arguments):
 # ui_function_create ###########################################################
 
 def ui_function_create(arguments):
+    """ docstring """
 
     global cell_grid
     global ant_list
@@ -422,6 +447,7 @@ def ui_function_create(arguments):
 # ui_function_escape ###########################################################
 
 def ui_function_escape(arguments):
+    """ docstring """
 
     global cell_grid
     global ant_list
@@ -459,6 +485,8 @@ def ui_function_escape(arguments):
 # ui_function_help #############################################################
 
 def ui_function_help(arguments):
+    """ docstring """
+
     global ui_functions_dict
     global ui_command_list
 
