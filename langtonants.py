@@ -7,8 +7,8 @@ import re
 
 # program imports ##############################################################
 
-from cellclass import Cell
-from antclass import Ant
+from components.cell import Cell
+from components.ant import Ant
 from utils.outputmessages import OutputMessages as msg
 from utils.regex import Regex as regex
 

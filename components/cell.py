@@ -1,7 +1,7 @@
 
 import random
 
-from antclass import Ant
+from components.ant import Ant
 from utils.outputmessages import OutputMessages as msg
 from utils.asciistyling import AsciiStyle as sty
 from utils.asciistyling import AsciiColor as color
