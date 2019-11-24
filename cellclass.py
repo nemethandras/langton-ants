@@ -1,9 +1,11 @@
-#!/usr/bin/env python3
 
 import random
 
 from antclass import Ant
-from utils.utils import *
+from utils.outputmessages import OutputMessages as msg
+from utils.asciistyling import AsciiStyle as sty
+from utils.asciistyling import AsciiColor as color
+from utils.asciistyling import AsciiBackground as bg
 
 # A cell on the game grid #
 
@@ -50,7 +52,7 @@ class Cell(object):
 
     def setColor(self, argNewColor):
         if argNewColor < self.MIN_COLOR_INDEX or argNewColor > self.MAX_COLOR_INDEX:
-            warningMessage("syntax error, invalid cell color")
+            msg.warning("syntax error, invalid cell color")
             return
         self.color = argNewColor
 
@@ -76,22 +78,22 @@ class Cell(object):
         if self.getOccupyingAnt() is None:
             returnString = str(self.getColor())
         else:
-            returnString = strRed(self.getOccupyingAnt().getName())
+            returnString = color.red(self.getOccupyingAnt().getName())
 
-        returnString = strBold(returnString)
+        returnString = sty.bold(returnString)
 
         if (self.getColor() == 0):
-            returnString = strBgWhite(strWhite(returnString))
+            returnString = bg.white(color.white(returnString))
         elif (self.getColor() == 1):
-            returnString = strBgYellow(strYellow(returnString))
+            returnString = bg.yellow(color.yellow(returnString))
         elif (self.getColor() == 2):
-            returnString = strBgBlue(strBlue(returnString))
+            returnString = bg.blue(color.blue(returnString))
         elif (self.getColor() == 3):
-            returnString = strBgGreen(strGreen(returnString))
+            returnString = bg.green(color.green(returnString))
         elif (self.getColor() == 4):
-            returnString = strBgCyan(strCyan(returnString))
+            returnString = bg.cyan(color.cyan(returnString))
         else:
-            returnString = strFramed(strBgBlack(strBlack("*")))
+            returnString = sty.framed(bg.black(color.black("*")))
 
         return returnString
 

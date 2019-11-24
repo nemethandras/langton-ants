@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
 
 import re
 
-from utils.utils import *
+from utils.regex import Regex as regex
+from utils.codec import ObjectCodec as codec
+from utils.codec import Hashing as hashing
 
 # An ant #
 
@@ -45,7 +46,8 @@ class Ant(object):
         self.name = None
         self.orientation = None
 
-        parsed = RegExMatch(argAntName, self.REGEX_ANT_DIRECTION)
+        parsed = regex.match(argAntName, self.REGEX_ANT_DIRECTION)
+
         if parsed is not None:
             if parsed["North"] is not None:
                 self.name = parsed["North"].lower()
@@ -54,10 +56,11 @@ class Ant(object):
                 self.name = parsed["South"].lower()
                 self.orientation = 180
 
-        self.hash = integerHash(hashSHA1(encode(self.getName())))
+        self.hash = hashing.integer_hash(hashing.hash_sha1(codec.encode(self.getName())))
         self.antType = None  # "standard" ant, "busy" ant, "lazy" ant #
 
-        parsed = RegExMatch(self.getName(), self.REGEX_ANT_TYPE)
+        parsed = regex.match(self.getName(), self.REGEX_ANT_TYPE)
+
         if parsed is not None:
             if parsed["standard"] is not None:
                 self.antType = "standard"
