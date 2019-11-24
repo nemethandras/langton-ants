@@ -3,7 +3,7 @@
 import random
 
 from antclass import Ant
-from utils import *
+from utils.utils import *
 
 # A cell on the game grid #
 
@@ -17,19 +17,19 @@ class Cell(object):
     def __init__(self, argType):
         self.color = -1 # default value is obstacle #
         self.occupyingAnt = None
-        
+
         if argType >= 0:
             self.setColor(argType)
-    
+
     def hasOccupyingAnt(self):
         if self.occupyingAnt is not None:
             return True
         else:
             return False
-    
+
     def getOccupyingAnt(self):
         return self.occupyingAnt
-    
+
     def setOccupyingAnt(self, newOccupyingAnt):
         self.occupyingAnt = newOccupyingAnt
 
@@ -41,10 +41,10 @@ class Cell(object):
             return True
         else:
             return False
-    
+
     def makeObstacle(self):
         self.color = self.OBSTACLE_COLOR
-    
+
     def getColor(self):
         return self.color
 
@@ -53,33 +53,33 @@ class Cell(object):
             warningMessage("syntax error, invalid cell color")
             return
         self.color = argNewColor
-    
+
     def resetColor(self):
         self.color = self.DEFAULT_COLOR
-    
+
     def randomColor(self):
         self.color = random.randint(self.MIN_COLOR_INDEX, self.MAX_COLOR_INDEX)
-        
+
     def randomCell(self):
         self.color = random.randint(self.OBSTACLE_COLOR, self.MAX_COLOR_INDEX)
-    
+
     def recalculateColor(self, argAlgorithmIndex=1):
         currentColor = self.getColor()
-        
+
         if argAlgorithmIndex == 1:
             newColor = (((4 * currentColor) + 23) % (self.MAX_COLOR_INDEX + 1))
-        
+
         self.setColor(newColor)
 
     def getRepresentation(self):
-    
+
         if self.getOccupyingAnt() is None:
             returnString = str(self.getColor())
         else:
             returnString = strRed(self.getOccupyingAnt().getName())
-       
+
         returnString = strBold(returnString)
-        
+
         if (self.getColor() == 0):
             returnString = strBgWhite(strWhite(returnString))
         elif (self.getColor() == 1):
@@ -92,6 +92,6 @@ class Cell(object):
             returnString = strBgCyan(strCyan(returnString))
         else:
             returnString = strFramed(strBgBlack(strBlack("*")))
-        
+
         return returnString
 
