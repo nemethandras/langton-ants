@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 
-############################### PYTHON IMPORTS ################################
+# Python imports ###############################################################
 
 import sys
 import re
 
-############################### PRIVATE IMPORTS ###############################
+# program imports ##############################################################
 
 from cellclass import Cell
 from antclass import Ant
 from utils.utils import *
 
-###############################################################################
-###############################################################################
-################################ Langton Ants #################################
-###############################################################################
-######### An extended version of the original Langton Ants simulation #########
-###############################################################################
-###############################################################################
+################################################################################
+#  Langton Ants ################################################################
+################################################################################
+#  An extended version of the original Langton Ants simulation #################
+################################################################################
 
-###############################################################################
-############################## GLOBAL VARIABLES ###############################
-###############################################################################
+# global variables #############################################################
 
 rule = [270, 90, 315, 45, 90]
 speedup = 2
@@ -31,9 +27,7 @@ cellGridWidth = -1 # invalid initial value for checking #
 antList = list()
 roundCount = 0
 
-###############################################################################
-######################### REGULAR EXPRESSION MATCHERS #########################
-###############################################################################
+# regular expression matchers ##################################################
 
 REGEX_RULE_CLA = re.compile("^rule=(?P<value>((45|90|270|315)-){4}(45|90|270|315))")
 REGEX_SPEEDUP_CLA = re.compile("^speedup=(?P<value>[1-9][0-9]*)")
@@ -46,11 +40,9 @@ REGEX_COUNT = re.compile("(?P<count>([0-9]|[1-9][0-9]*))")
 REGEX_ANT_ANY = re.compile("(?P<name>[a-zA-Z])")
 REGEX_ANT_DATA = re.compile("(?P<name>[a-zA-Z]),(?P<row>(0|[1-9][0-9]*)),(?P<column>(0|[1-9][0-9]*))")
 
-###############################################################################
-######################### CONTROL FUNCTION DEFINITIONS ########################
-###############################################################################
+# control function definitions #################################################
 
-# start: getAnt ###############################################################
+# start: getAnt ################################################################
 
 def getAnt(argAntName):
     antName = argAntName.lower()
@@ -62,9 +54,9 @@ def getAnt(argAntName):
     # if an ant was not found, None is returned #
     return None
 
-# end: getAnt #################################################################
+# end: getAnt ##################################################################
 
-# start: performAntActions ####################################################
+# start: performAntActions #####################################################
 
 def performAntActions(argAnt):
     global cellGrid
@@ -106,9 +98,9 @@ def performAntActions(argAnt):
     # if everything went in order, return ant for a possible new iteration #
     return argAnt
 
-# end: performAntActions ######################################################
+# end: performAntActions #######################################################
 
-# start decorator: printGridAfter #############################################
+# start decorator: printGridAfter ##############################################
 
 def printGridAfter(argFunction):
     def newFunction(arguments):
@@ -116,9 +108,9 @@ def printGridAfter(argFunction):
         uiFunction_print(list())
     return newFunction
 
-# end decorator: printGridAfter ###############################################
+# end decorator: printGridAfter ################################################
 
-# start decorator: printResult ################################################
+# start decorator: printResult #################################################
 
 def printResult(argFunction):
     def newFunction(arguments):
@@ -127,13 +119,11 @@ def printResult(argFunction):
             print(str(result))
     return newFunction
 
-# end decorator: printResult ##################################################
+# end decorator: printResult ###################################################
 
-###############################################################################
-###################### BEGIN USER INTERFACE DEFINITIONS #######################
-###############################################################################
+# begin user interface definitions #############################################
 
-# start: uiFunction_quit ######################################################
+# start: uiFunction_quit #######################################################
 
 def uiFunction_quit(arguments):
     if len(arguments) > 0:
@@ -141,11 +131,11 @@ def uiFunction_quit(arguments):
         return
 
     sys.exit(0)
-##### BREAKPOINT #
+### BREAKPOINT #
 
-# end: uiFunction_quit ########################################################
+# end: uiFunction_quit #########################################################
 
-# start: uiFunction_print #####################################################
+# start: uiFunction_print ######################################################
 
 # reference function for @printGridAfter
 def uiFunction_print(arguments):
@@ -165,9 +155,9 @@ def uiFunction_print(arguments):
 
         print(rowString)
 
-# end: uiFunction_print #######################################################
+# end: uiFunction_print ########################################################
 
-# start: uiFunction_ant #######################################################
+# start: uiFunction_ant ########################################################
 
 @printResult
 def uiFunction_ant(arguments):
@@ -188,9 +178,9 @@ def uiFunction_ant(arguments):
 
     return "The following ants are on the grid: " + resultString
 
-# end: uiFunction_ant #########################################################
+# end: uiFunction_ant ##########################################################
 
-# start: uiFunction_reset #####################################################
+# start: uiFunction_reset ######################################################
 
 @printGridAfter
 def uiFunction_reset(arguments):
@@ -206,9 +196,9 @@ def uiFunction_reset(arguments):
 
     infoMessage("the grid cells have been reset")
 
-# end: uiFunction_reset #######################################################
+# end: uiFunction_reset ########################################################
 
-# start: uiFunction_random ####################################################
+# start: uiFunction_random #####################################################
 
 @printGridAfter
 def uiFunction_random(arguments):
@@ -224,9 +214,9 @@ def uiFunction_random(arguments):
 
     infoMessage("the grid cells have been randomized")
 
-# end: uiFunction_random ######################################################
+# end: uiFunction_random #######################################################
 
-# start: uiFunction_arcade ####################################################
+# start: uiFunction_arcade #####################################################
 
 @printGridAfter
 def uiFunction_arcade(arguments):
@@ -253,9 +243,9 @@ def uiFunction_arcade(arguments):
 
     infoMessage("a random arcade grid has been created")
 
-# end: uiFunction_arcade ######################################################
+# end: uiFunction_arcade #######################################################
 
-# start: uiFunction_step ######################################################
+# start: uiFunction_step #######################################################
 
 def uiFunction_step(arguments):
     if len(arguments) > 0:
@@ -265,9 +255,9 @@ def uiFunction_step(arguments):
     infoMessage("one move has been made")
     uiFunction_move(list("1"))
 
-# end: uiFunction_step ########################################################
+# end: uiFunction_step #########################################################
 
-# start: uiFunction_move ######################################################
+# start: uiFunction_move #######################################################
 
 @printGridAfter
 def uiFunction_move(arguments):
@@ -313,9 +303,9 @@ def uiFunction_move(arguments):
                     performAntActions(currentAnt)
                 continue
 
-# end: uiFunction_move ########################################################
+# end: uiFunction_move #########################################################
 
-# start: uiFunction_position ##################################################
+# start: uiFunction_position ###################################################
 
 @printResult
 def uiFunction_position(arguments):
@@ -337,9 +327,9 @@ def uiFunction_position(arguments):
 
     return "The position of ant '" + antName + "' is: " + ant.getPositionStr()
 
-# end: uiFunction_position ####################################################
+# end: uiFunction_position #####################################################
 
-# start: uiFunction_field #####################################################
+# start: uiFunction_field ######################################################
 
 @printResult
 def uiFunction_field(arguments):
@@ -370,9 +360,9 @@ def uiFunction_field(arguments):
 
     return "The field in the " + str(row + 1) + ". row and the " + str(column + 1) + ". column has the color: " + cellGrid[row][column].getRepresentation()
 
-# end: uiFunction_field #######################################################
+# end: uiFunction_field ########################################################
 
-# start: uiFunction_direction #################################################
+# start: uiFunction_direction ##################################################
 
 @printResult
 def uiFunction_direction(arguments):
@@ -394,9 +384,9 @@ def uiFunction_direction(arguments):
 
     return ant.getOrientationStr()
 
-# end: uiFunction_direction ###################################################
+# end: uiFunction_direction ####################################################
 
-# start: uiFunction_create ####################################################
+# start: uiFunction_create #####################################################
 
 def uiFunction_create(arguments):
     global cellGrid
@@ -442,9 +432,9 @@ def uiFunction_create(arguments):
 
     infoMessage("Created a new ant '" + newAntName + "' in the " + newAntPosRow + ". row and the " + newAntPosColumn + ". column.")
 
-# end: uiFunction_create ######################################################
+# end: uiFunction_create #######################################################
 
-# start: uiFunction_escape ####################################################
+# start: uiFunction_escape #####################################################
 
 def uiFunction_escape(arguments):
     global cellGrid
@@ -479,9 +469,9 @@ def uiFunction_escape(arguments):
     if (len(antList) < 1):
         warningMessage("all ants have left the game grid")
 
-# end: uiFunction_escape ######################################################
+# end: uiFunction_escape #######################################################
 
-# start: uiFunction_help ####################################################
+# start: uiFunction_help #######################################################
 
 def uiFunction_help(arguments):
     global uiFunctionsDict
@@ -490,11 +480,9 @@ def uiFunction_help(arguments):
     for command in uiCommandList:
         print(str(command))
 
-# end: uiFunction_help ######################################################
+# end: uiFunction_help #########################################################
 
-###############################################################################
-###################### USER INTERFACE COMMAND DICTIONARY ######################
-###############################################################################
+# user interface command dictionary ############################################
 
 uiFunctionsDict = {
     # UI commands with zero (0) arguments #
@@ -523,9 +511,7 @@ uiFunctionsDict = {
 }
 uiCommandList = list(uiFunctionsDict.keys())
 
-###############################################################################
-########################### BEGIN MAIN CONTROL FLOW ###########################
-###############################################################################
+# begin main control flow ######################################################
 
 argList = sys.argv
 filename = argList.pop(0)
@@ -535,7 +521,7 @@ argumentcount = len(arguments)
 if argumentcount < 1:
     errorMessage("missing command line argument")
     sys.exit(1)
-##### BREAKPOINT #
+### BREAKPOINT #
 
 gameFile = open(arguments[0], 'r')
 gridRows = list()
@@ -548,7 +534,7 @@ cellGridHeight = len(gridRows)
 if cellGridHeight < 1:
     errorMessage("syntax error in the game file")
     sys.exit(1)
-##### BREAKPOINT #
+### BREAKPOINT #
 
 for n1 in range(0, cellGridHeight):
     cellGrid.append(list())
@@ -611,10 +597,9 @@ if argumentcount > 1:
         # else #
         errorMessage("invalid command line argument")
         sys.exit(1)
-######### BREAKPOINT #
-        ###############################################################################
-###################### BEGIN INTERACTIVE USER INTERFACE #######################
-###############################################################################
+####### BREAKPOINT #
+
+# begin interactive user interface #############################################
 
 while True:
     userInput = input("LangtonAnts $ ")
@@ -635,7 +620,5 @@ while True:
     uiFunctionsDict[uiCommand](inputElements)
     continue
 
-###############################################################################
-########################## END OF MAIN CONTROL FLOW ###########################
-###############################################################################
+# end of main control flow #####################################################
 
