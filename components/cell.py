@@ -7,10 +7,8 @@ from utils.asciistyling import AsciiStyle as sty
 from utils.asciistyling import AsciiColor as color
 from utils.asciistyling import AsciiBackground as bg
 
-# A cell on the game grid #
-
 class Cell():
-    """ docstring """
+    """ A cell on the game grid """
 
     OBSTACLE_COLOR = -1
     MIN_COLOR_INDEX = 0
